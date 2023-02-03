@@ -1,0 +1,43 @@
+{
+  "name": "misskey-media-proxy",
+  "version": "0.0.0",
+  "description": "The Media Proxy for Misskey",
+  "main": "index.js",
+  "packageManager": "pnpm@7.26.0",
+  "type": "module",
+  "scripts": {
+    "build": "swc src -d built -D",
+    "watch": "swc src -d built -D -w & fastify start -w -l info -P ./built/index.js",
+    "start": "fastify start -l info ./built/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/misskey-dev/media-proxy.git"
+  },
+  "author": "syuilo, tamaina",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/misskey-dev/media-proxy/issues"
+  },
+  "homepage": "https://github.com/misskey-dev/media-proxy#readme",
+  "devDependencies": {
+    "@fastify/static": "^6.8.0",
+    "@swc/cli": "^0.1.61",
+    "@swc/core": "^1.3.32",
+    "@types/sharp": "^0.31.1",
+    "@types/tmp": "^0.2.3"
+  },
+  "dependencies": {
+    "cacheable-lookup": "^7.0.0",
+    "fastify": "^4.12.0",
+    "fastify-cli": "^5.7.1",
+    "file-type": "^18.2.0",
+    "got": "^12.5.3",
+    "hpagent": "^1.2.0",
+    "ip-cidr": "^3.1.0",
+    "is-svg": "^4.3.2",
+    "private-ip": "^3.0.0",
+    "sharp": "^0.31.3",
+    "tmp": "^0.2.1"
+  }
+}
