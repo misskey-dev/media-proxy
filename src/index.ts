@@ -72,28 +72,7 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
         const isAnimationConvertibleImage = isMimeImage(file.mime, 'sharp-animation-convertible-image');
 
         let image: IImageStreamable | null = null;
-        if ('emoji' in request.query && isConvertibleImage) {
-            if (!isAnimationConvertibleImage && !('static' in request.query)) {
-                image = {
-                    data: fs.createReadStream(file.path),
-                    ext: file.ext,
-                    type: file.mime,
-                };
-            } else {
-                const data = sharp(file.path, { animated: !('static' in request.query) })
-                    .resize({
-                        height: 128,
-                        withoutEnlargement: true,
-                    })
-                    .webp(webpDefault);
-
-                image = {
-                    data,
-                    ext: 'webp',
-                    type: 'image/webp',
-                };
-            }
-        } else if ('avatar' in request.query && isConvertibleImage) {
+        if (('emoji' in request.query || 'avatar' in request.query) && isConvertibleImage) {
             if (!isAnimationConvertibleImage && !('static' in request.query)) {
                 image = {
                     data: fs.createReadStream(file.path),
@@ -103,7 +82,7 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
             } else {
                 const data = sharp(file.path, { animated: !('static' in request.query) })
                         .resize({
-                            height: 320,
+                            height: 'emoji' in request.query ? 128 : 320,
                             withoutEnlargement: true,
                         })
                         .webp(webpDefault);
