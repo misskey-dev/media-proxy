@@ -89,5 +89,5 @@ sudo systemctl start media-proxy
 mediaProxyの指定をdefault.ymlに追記し、Misskeyを再起動してください。
 
 ```yml
-mediaProxy: https://mediaproxy.example.com/
+mediaProxy: https://mediaproxy.example.com
 ```
