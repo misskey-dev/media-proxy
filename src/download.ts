@@ -11,7 +11,7 @@ import { httpAgent, httpsAgent } from './http.js';
 const pipeline = util.promisify(stream.pipeline);
 
 export async function downloadUrl(url: string, path: string): Promise<void> {
-    console.log(`Downloading ${url} to ${path} ...`);
+    if (process.env.NODE_ENV !== 'production') console.log(`Downloading ${url} to ${path} ...`);
 
     const timeout = 30 * 1000;
     const operationTimeout = 60 * 1000;
@@ -70,7 +70,7 @@ export async function downloadUrl(url: string, path: string): Promise<void> {
         }
     }
 
-    console.log(`Download finished: ${url}`);
+    if (process.env.NODE_ENV !== 'production') console.log(`Download finished: ${url}`);
 }
 
 

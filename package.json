@@ -2,13 +2,13 @@
   "name": "misskey-media-proxy",
   "version": "0.0.0",
   "description": "The Media Proxy for Misskey",
-  "main": "index.js",
+  "main": "built/index.js",
   "packageManager": "pnpm@7.26.0",
   "type": "module",
   "scripts": {
     "build": "swc src -d built -D",
     "watch": "swc src -d built -D -w & fastify start -w -l info -P ./built/index.js",
-    "start": "fastify start -l info ./built/index.js"
+    "start": "fastify start ./built/index.js"
   },
   "repository": {
     "type": "git",

@@ -30,7 +30,7 @@ export default function (fastify: FastifyInstance, options: FastifyPluginOptions
     fastify.get<{
         Params: { url: string; };
         Querystring: { url?: string; };
-    }>('/proxy/:url*', async (request, reply) => {
+    }>('/:url*', async (request, reply) => {
         return await proxyHandler(request, reply)
             .catch(err => errorHandler(request, reply, err));
     });
