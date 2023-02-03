@@ -93,6 +93,27 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
                     type: 'image/webp',
                 };
             }
+        } else if ('avatar' in request.query && isConvertibleImage) {
+            if (!isAnimationConvertibleImage && !('static' in request.query)) {
+                image = {
+                    data: fs.createReadStream(file.path),
+                    ext: file.ext,
+                    type: file.mime,
+                };
+            } else {
+                const data = sharp(file.path, { animated: !('static' in request.query) })
+                        .resize({
+                            height: 320,
+                            withoutEnlargement: true,
+                        })
+                        .webp(webpDefault);
+
+                image = {
+                    data,
+                    ext: 'webp',
+                    type: 'image/webp',
+                };
+            }
         } else if ('static' in request.query && isConvertibleImage) {
             image = convertToWebpStream(file.path, 498, 280);
         } else if ('preview' in request.query && isConvertibleImage) {
