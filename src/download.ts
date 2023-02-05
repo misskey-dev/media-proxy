@@ -1,16 +1,35 @@
 import * as fs from 'node:fs';
 import * as stream from 'node:stream';
 import * as util from 'node:util';
+import * as http from 'node:http';
+import * as https from 'node:https';
 import got, * as Got from 'got';
 import IPCIDR from 'ip-cidr';
 import PrivateIp from 'private-ip';
 import { StatusError } from './status-error.js';
-import config from '../config.js';
-import { httpAgent, httpsAgent } from './http.js';
+import { getAgents } from './http.js';
 
 const pipeline = util.promisify(stream.pipeline);
 
-export async function downloadUrl(url: string, path: string): Promise<void> {
+export type DownloadConfig = {
+    [x: string]: any;
+    userAgent: string;
+    allowedPrivateNetworks: string[];
+    maxSize: number;
+    httpAgent: http.Agent,
+    httpsAgent: https.Agent,
+    proxy?: boolean;
+}
+
+export const defaultDownloadConfig = {
+    userAgent: `MisskeyMediaProxy/0.0.0`,
+    allowedPrivateNetworks: [],
+    maxSize: 262144000,
+    proxy: false,
+    ...getAgents()
+}
+
+export async function downloadUrl(url: string, path: string, settings:DownloadConfig = defaultDownloadConfig): Promise<void> {
     if (process.env.NODE_ENV !== 'production') console.log(`Downloading ${url} to ${path} ...`);
 
     const timeout = 30 * 1000;
@@ -18,7 +37,7 @@ export async function downloadUrl(url: string, path: string): Promise<void> {
 
     const req = got.stream(url, {
         headers: {
-            'User-Agent': config.userAgent,
+            'User-Agent': settings.userAgent,
         },
         timeout: {
             lookup: timeout,
@@ -30,8 +49,8 @@ export async function downloadUrl(url: string, path: string): Promise<void> {
             request: operationTimeout,	// whole operation timeout
         },
         agent: {
-            http: httpAgent,
-            https: httpsAgent,
+            http: settings.httpAgent,
+            https: settings.httpsAgent,
         },
         http2: true,
         retry: {
@@ -39,8 +58,8 @@ export async function downloadUrl(url: string, path: string): Promise<void> {
         },
         enableUnixSockets: false,
     }).on('response', (res: Got.Response) => {
-        if ((process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') && !config.proxy && res.ip) {
-            if (isPrivateIp(res.ip)) {
+        if ((process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') && !settings.proxy && res.ip) {
+            if (isPrivateIp(res.ip, settings.allowedPrivateNetworks)) {
                 console.log(`Blocked address: ${res.ip}`);
                 req.destroy();
             }
@@ -49,14 +68,14 @@ export async function downloadUrl(url: string, path: string): Promise<void> {
         const contentLength = res.headers['content-length'];
         if (contentLength != null) {
             const size = Number(contentLength);
-            if (size > config.maxSize) {
-                console.log(`maxSize exceeded (${size} > ${config.maxSize}) on response`);
+            if (size > settings.maxSize) {
+                console.log(`maxSize exceeded (${size} > ${settings.maxSize}) on response`);
                 req.destroy();
             }
         }
     }).on('downloadProgress', (progress: Got.Progress) => {
-        if (progress.transferred > config.maxSize) {
-            console.log(`maxSize exceeded (${progress.transferred} > ${config.maxSize}) on downloadProgress`);
+        if (progress.transferred > settings.maxSize) {
+            console.log(`maxSize exceeded (${progress.transferred} > ${settings.maxSize}) on downloadProgress`);
             req.destroy();
         }
     });
@@ -75,8 +94,8 @@ export async function downloadUrl(url: string, path: string): Promise<void> {
 }
 
 
-function isPrivateIp(ip: string): boolean {
-    for (const net of config.allowedPrivateNetworks ?? []) {
+function isPrivateIp(ip: string, allowedPrivateNetworks: string[]): boolean {
+    for (const net of allowedPrivateNetworks ?? []) {
         const cidr = new IPCIDR(net);
         if (cidr.contains(ip)) {
             return false;

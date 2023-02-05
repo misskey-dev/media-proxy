@@ -5,7 +5,25 @@ Misskeyの/proxyが単体で動作します（Misskeyのコードがほぼその
 **Fastifyプラグインとして動作する気がします。**  
 `pnpm start`は[fastify-cli](https://github.com/fastify/fastify-cli)が動作します。
 
-## セットアップ方法
+## Fastifyプラグインとして動作させる
+### npm install
+
+```
+npm install git+https://github.com/misskey-dev/media-proxy.git
+```
+
+### Fastifyプラグインを書く
+```
+import MediaProxy from 'misskey-media-proxy';
+
+// ......
+
+fastify.register(MediaProxy);
+```
+
+オプションを指定できます。オプションの内容はindex.tsのMediaProxyOptionsに指定してあります。
+
+## サーバーのセットアップ方法
 まずはgit cloneしてcdしてください。
 
 ```
@@ -25,7 +43,7 @@ NODE_ENV=production pnpm install
 ```js
 import { readFileSync } from 'node:fs';
 
-const repo = JSON.stringify(readFileSync('./package.json', 'utf8'));
+const repo = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 export default {
     // UA
@@ -91,3 +109,4 @@ mediaProxyの指定をdefault.ymlに追記し、Misskeyを再起動してくだ�
 ```yml
 mediaProxy: https://mediaproxy.example.com
 ```
+

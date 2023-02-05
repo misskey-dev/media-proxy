@@ -1,4 +1,6 @@
 import * as fs from 'node:fs';
+import * as http from 'node:http';
+import * as https from 'node:https';
 import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import fastifyStatic from '@fastify/static';
@@ -9,14 +11,60 @@ import type { FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginOption
 import { detectType, isMimeImage } from './file-info.js';
 import sharp from 'sharp';
 import { StatusError } from './status-error.js';
-import { downloadUrl } from './download.js';
+import { DownloadConfig, defaultDownloadConfig, downloadUrl } from './download.js';
+import { getAgents } from './http.js';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
 const assets = `${_dirname}/../../server/file/assets/`;
 
-export default function (fastify: FastifyInstance, options: FastifyPluginOptions, done: (err?: Error) => void) {
+export type MediaProxyOptions = {
+    userAgent?: string;
+    allowedPrivateNetworks?: string[];
+    maxSize?: number;
+} & ({
+    proxy?: string;
+} | {
+    httpAgent: http.Agent;
+    httpsAgent: https.Agent;
+});
+
+let config: DownloadConfig = defaultDownloadConfig;
+
+export function setMediaProxyConfig(setting?: MediaProxyOptions | null) {
+    const proxy = process.env.HTTP_PROXY ?? process.env.http_proxy;
+
+    if (!setting) {
+        config = {
+            ...defaultDownloadConfig,
+            ...(proxy ? getAgents(proxy) : {}),
+            proxy: !!proxy,
+        };
+        console.log(config);
+        return;
+    }
+
+    config = {
+        userAgent: setting.userAgent ?? defaultDownloadConfig.userAgent,
+        allowedPrivateNetworks: setting.allowedPrivateNetworks ?? defaultDownloadConfig.allowedPrivateNetworks,
+        maxSize: setting.maxSize ?? defaultDownloadConfig.maxSize,
+        ...('proxy' in setting ?
+            { ...getAgents(setting.proxy), proxy: !!setting.proxy } :
+            'httpAgent' in setting ? {
+                httpAgent: setting.httpAgent,
+                httpsAgent: setting.httpsAgent,
+                proxy: true,
+            } :
+            { ...getAgents(proxy), proxy: !!proxy }),
+    };
+
+    console.log(config);
+}
+
+export default function (fastify: FastifyInstance, options: MediaProxyOptions | null | undefined, done: (err?: Error) => void) {
+    setMediaProxyConfig(options);
+
     fastify.addHook('onRequest', (request, reply, done) => {
         reply.header('Content-Security-Policy', `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`);
         done();
@@ -57,9 +105,9 @@ function errorHandler(request: FastifyRequest<{ Params?: { [x: string]: any }; Q
 }
 
 async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; Querystring: { url?: string; }; }>, reply: FastifyReply) {
-    const url = 'url' in request.query ? request.query.url : 'https://' + request.params.url;
+    const url = 'url' in request.query ? request.query.url : (request.params.url && 'https://' + request.params.url);
 
-    if (typeof url !== 'string') {
+    if (!url || typeof url !== 'string') {
         reply.code(400);
         return;
     }
@@ -171,7 +219,7 @@ async function downloadAndDetectTypeFromUrl(url: string): Promise<
 > {
     const [path, cleanup] = await createTemp();
     try {
-        await downloadUrl(url, path);
+        await downloadUrl(url, path, config);
 
         const { mime, ext } = await detectType(path);
 

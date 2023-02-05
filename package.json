@@ -6,9 +6,9 @@
   "packageManager": "pnpm@7.26.0",
   "type": "module",
   "scripts": {
-    "build": "swc src -d built -D",
+    "build": "tsc -p tsconfig.json",
     "watch": "swc src -d built -D -w & fastify start -w -l info -P ./built/index.js",
-    "start": "fastify start ./built/index.js"
+    "start": "fastify start ./server.js"
   },
   "repository": {
     "type": "git",
@@ -23,8 +23,10 @@
   "devDependencies": {
     "@swc/cli": "^0.1.61",
     "@swc/core": "^1.3.32",
+    "@types/node": "^18.11.19",
     "@types/sharp": "^0.31.1",
-    "@types/tmp": "^0.2.3"
+    "@types/tmp": "^0.2.3",
+    "typescript": "^4.9.5"
   },
   "dependencies": {
     "@fastify/static": "^6.8.0",
