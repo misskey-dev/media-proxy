@@ -78,8 +78,8 @@ WantedBy=multi-user.target
 
 ```
 sudo systemctl daemon-reload
-sudo systemctl enable media-proxy
-sudo systemctl start media-proxy
+sudo systemctl enable misskey-proxy
+sudo systemctl start misskey-proxy
 ```
 
 3000ポートまでnginxなどでルーティングしてやります。
