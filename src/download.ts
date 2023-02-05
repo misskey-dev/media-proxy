@@ -37,6 +37,7 @@ export async function downloadUrl(url: string, path: string): Promise<void> {
         retry: {
             limit: 0,
         },
+        enableUnixSockets: false,
     }).on('response', (res: Got.Response) => {
         if ((process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'test') && !config.proxy && res.ip) {
             if (isPrivateIp(res.ip)) {
