@@ -77,6 +77,7 @@ async function proxyHandler(request, reply) {
     }
     // Create temp file
     const file = await downloadAndDetectTypeFromUrl(url);
+    console.log(fs.statSync(file.path));
     try {
         const isConvertibleImage = isMimeImage(file.mime, 'sharp-convertible-image');
         const isAnimationConvertibleImage = isMimeImage(file.mime, 'sharp-animation-convertible-image');
