@@ -166,7 +166,7 @@ async function proxyHandler(request, reply) {
         }
         reply.header('Content-Type', image.type);
         reply.header('Cache-Control', 'max-age=31536000, immutable');
-        return image.data;
+        return reply.send(image.data);
     }
     catch (e) {
         if ('cleanup' in file)

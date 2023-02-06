@@ -207,7 +207,7 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
 
         reply.header('Content-Type', image.type);
         reply.header('Cache-Control', 'max-age=31536000, immutable');
-        return image.data;
+        return reply.send(image.data);
     } catch (e) {
         if ('cleanup' in file) file.cleanup();
         throw e;
