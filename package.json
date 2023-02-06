@@ -5,6 +5,11 @@
   "main": "built/index.js",
   "packageManager": "pnpm@7.26.0",
   "type": "module",
+  "files": [
+    "built",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "watch": "swc src -d built -D -w & fastify start -w -l info -P ./built/index.js",
