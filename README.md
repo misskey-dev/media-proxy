@@ -47,7 +47,7 @@ const repo = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 export default {
     // UA
-    userAgent: `MisskeyMediaProxy/${package.version}`,
+    userAgent: `MisskeyMediaProxy/${repo.version}`,
 
     // プライベートネットワークでも許可するIP CIDR（default.ymlと同じ）
     allowedPrivateNetworks: [],
