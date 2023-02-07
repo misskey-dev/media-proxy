@@ -119,8 +119,22 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
         const isConvertibleImage = isMimeImage(file.mime, 'sharp-convertible-image');
         const isAnimationConvertibleImage = isMimeImage(file.mime, 'sharp-animation-convertible-image');
 
+        if (
+            'emoji' in request.query ||
+            'avatar' in request.query ||
+            'static' in request.query ||
+            'preview' in request.query ||
+            'badge' in request.query
+        ) {
+            if (!isConvertibleImage) {
+                // 画像でないなら404でお茶を濁す
+                throw new StatusError('Unexpected mime', 404);
+            }
+        }
+
         let image: IImageStreamable | null = null;
-        if (('emoji' in request.query || 'avatar' in request.query) && isConvertibleImage) {
+
+        if ('emoji' in request.query || 'avatar' in request.query) {
             if (!isAnimationConvertibleImage && !('static' in request.query)) {
                 image = {
                     data: fs.createReadStream(file.path),
@@ -141,16 +155,11 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
                     type: 'image/webp',
                 };
             }
-        } else if ('static' in request.query && isConvertibleImage) {
+        } else if ('static' in request.query) {
             image = convertToWebpStream(file.path, 498, 280);
-        } else if ('preview' in request.query && isConvertibleImage) {
+        } else if ('preview' in request.query) {
             image = convertToWebpStream(file.path, 200, 200);
         } else if ('badge' in request.query) {
-            if (!isConvertibleImage) {
-                // 画像でないなら404でお茶を濁す
-                throw new StatusError('Unexpected mime', 404);
-            }
-
             const mask = sharp(file.path)
                 .resize(96, 96, {
                     fit: 'inside',
