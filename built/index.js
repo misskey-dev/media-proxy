@@ -158,8 +158,12 @@ async function proxyHandler(request, reply) {
         if ('cleanup' in file) {
             if ('pipe' in image.data && typeof image.data.pipe === 'function') {
                 // image.dataがstreamなら、stream終了後にcleanup
-                image.data.on('end', file.cleanup);
-                image.data.on('close', file.cleanup);
+                const cleanup = () => {
+                    file.cleanup();
+                    image = null;
+                };
+                image.data.on('end', cleanup);
+                image.data.on('close', cleanup);
             }
             else {
                 // image.dataがstreamでないなら直ちにcleanup
