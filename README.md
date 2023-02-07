@@ -2,6 +2,8 @@
 
 Misskeyの/proxyが単体で動作します（Misskeyのコードがほぼそのまま移植されています）。
 
+/proxyは画像ではないと403を返しますが、Media Proxyではそのまま内容を送信します。
+
 **Fastifyプラグインとして動作する気がします。**  
 `pnpm start`は[fastify-cli](https://github.com/fastify/fastify-cli)が動作します。
 
@@ -52,7 +54,7 @@ export default {
     // プライベートネットワークでも許可するIP CIDR（default.ymlと同じ）
     allowedPrivateNetworks: [],
 
-    // ダウンロードするファイルの最大サイズ
+    // ダウンロードするファイルの最大サイズ (bytes)
     maxSize: 262144000,
 
     // フォワードプロキシ

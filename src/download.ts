@@ -93,7 +93,6 @@ export async function downloadUrl(url: string, path: string, settings:DownloadCo
     if (process.env.NODE_ENV !== 'production') console.log(`Download finished: ${url}`);
 }
 
-
 function isPrivateIp(ip: string, allowedPrivateNetworks: string[]): boolean {
     for (const net of allowedPrivateNetworks ?? []) {
         const cidr = new IPCIDR(net);
