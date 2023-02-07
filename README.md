@@ -7,6 +7,9 @@ Misskeyの/proxyが単体で動作します（Misskeyのコードがほぼその
 **Fastifyプラグインとして動作する気がします。**  
 `pnpm start`は[fastify-cli](https://github.com/fastify/fastify-cli)が動作します。
 
+一応AWS Lambdaで動かす実装を用意しましたが、お勧めはしません。
+https://github.com/tamaina/media-proxy-lambda
+
 ## Fastifyプラグインとして動作させる
 ### npm install
 
