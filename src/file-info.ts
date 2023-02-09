@@ -34,7 +34,7 @@ export async function detectType(path: string): Promise<{
             return TYPE_SVG;
         }
 
-        if (isMimeImage(type.mime, 'safe-file')) {
+        if (!isMimeImage(type.mime, 'safe-file')) {
             return TYPE_OCTET_STREAM;
         }
 
