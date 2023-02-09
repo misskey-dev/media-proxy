@@ -26,7 +26,7 @@ export async function detectType(path) {
         if (type.mime === 'application/xml' && await checkSvg(path)) {
             return TYPE_SVG;
         }
-        if (isMimeImage(type.mime, 'safe-file')) {
+        if (!isMimeImage(type.mime, 'safe-file')) {
             return TYPE_OCTET_STREAM;
         }
         return {
