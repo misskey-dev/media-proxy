@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import fastifyStatic from '@fastify/static';
 import { createTemp } from './create-temp.js';
+import { FILE_TYPE_BROWSERSAFE } from './const.js';
 import { convertToWebpStream, webpDefault } from './image-processor.js';
 import { detectType, isMimeImage } from './file-info.js';
 import sharp from 'sharp';
@@ -147,6 +148,9 @@ async function proxyHandler(request, reply) {
         }
         else if (file.mime === 'image/svg+xml') {
             image = convertToWebpStream(file.path, 2048, 2048);
+        }
+        else if (!file.mime.startsWith('image/') || !FILE_TYPE_BROWSERSAFE.includes(file.mime)) {
+            throw new StatusError('Rejected type', 403, 'Rejected type');
         }
         if (!image) {
             image = {
