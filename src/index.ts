@@ -20,6 +20,9 @@ const _dirname = dirname(_filename);
 const assets = `${_dirname}/../../server/file/assets/`;
 
 export type MediaProxyOptions = {
+    ['Access-Control-Allow-Origin']?: string;
+    ['Access-Control-Allow-Headers']?: string;
+    ['Content-Security-Policy']?: string;
     userAgent?: string;
     allowedPrivateNetworks?: string[];
     maxSize?: number;
@@ -66,7 +69,10 @@ export default function (fastify: FastifyInstance, options: MediaProxyOptions | 
     setMediaProxyConfig(options);
 
     fastify.addHook('onRequest', (request, reply, done) => {
-        reply.header('Content-Security-Policy', `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`);
+        reply.header('Access-Control-Allow-Origin', options!['Access-Control-Allow-Origin'] ?? '*');
+        reply.header('Access-Control-Allow-Headers', options!['Access-Control-Allow-Headers'] ?? '*');
+        reply.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
+        reply.header('Content-Security-Policy', options!['Content-Security-Policy'] ?? `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`);
         done();
     });
 
