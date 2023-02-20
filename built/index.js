@@ -41,11 +41,20 @@ export function setMediaProxyConfig(setting) {
 }
 export default function (fastify, options, done) {
     setMediaProxyConfig(options);
+    const corsOrigin = options['Access-Control-Allow-Origin'] ?? '*';
+    const corsHeader = options['Access-Control-Allow-Headers'] ?? '*';
+    const csp = options['Content-Security-Policy'] ?? `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`;
     fastify.addHook('onRequest', (request, reply, done) => {
-        reply.header('Access-Control-Allow-Origin', options['Access-Control-Allow-Origin'] ?? '*');
-        reply.header('Access-Control-Allow-Headers', options['Access-Control-Allow-Headers'] ?? '*');
+        if (corsOrigin === '*') {
+            reply.header('Access-Control-Allow-Origin', request.headers.origin ?? '*');
+            reply.header('Vary', 'Origin');
+        }
+        else {
+            reply.header('Access-Control-Allow-Origin', corsOrigin);
+        }
+        reply.header('Access-Control-Allow-Headers', corsHeader);
         reply.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
-        reply.header('Content-Security-Policy', options['Content-Security-Policy'] ?? `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`);
+        reply.header('Content-Security-Policy', csp);
         done();
     });
     fastify.register(fastifyStatic, {

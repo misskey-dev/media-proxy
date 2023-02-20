@@ -61,6 +61,10 @@ export default {
     maxSize: 262144000,
 
     // CORS
+    // WARN:
+    //    'Access-Control-Allow-Origin'を'*'に設定した場合、要求のOriginヘッダーを応答します。
+    //    （Misskeyのアバタークロップに必要なため）
+    //    Varyヘッダーが付加されるため、同じURLでもOriginごとに画像が生成されてしまうはずです。
     ['Access-Control-Allow-Origin']: '*',
     ['Access-Control-Allow-Headers']: '*',
 
