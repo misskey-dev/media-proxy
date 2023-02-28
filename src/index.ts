@@ -273,6 +273,9 @@ function correctFilename(filename: string, ext: string | null) {
     if (ext === 'jpg' && filename.endsWith('.jpeg')) {
         return filename;
     }
+    if (ext === 'tif' && filename.endsWith('.tiff')) {
+        return filename;
+    }
     return `${filename}${dotExt}`;
 }
 

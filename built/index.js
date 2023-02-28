@@ -217,6 +217,9 @@ function correctFilename(filename, ext) {
     if (ext === 'jpg' && filename.endsWith('.jpeg')) {
         return filename;
     }
+    if (ext === 'tif' && filename.endsWith('.tiff')) {
+        return filename;
+    }
     return `${filename}${dotExt}`;
 }
 function contentDisposition(type, filename) {
