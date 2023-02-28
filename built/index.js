@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname } from 'node:path';
 import fastifyStatic from '@fastify/static';
 import { createTemp } from './create-temp.js';
+import { FILE_TYPE_BROWSERSAFE } from './const.js';
 import { convertToWebpStream, webpDefault } from './image-processor.js';
 import { detectType, isMimeImage } from './file-info.js';
 import sharp from 'sharp';
@@ -11,7 +12,7 @@ import { defaultDownloadConfig, downloadUrl } from './download.js';
 import { getAgents } from './http.js';
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
-const assets = `${_dirname}/../../server/file/assets/`;
+const assets = `${_dirname}/../assets/`;
 let config = defaultDownloadConfig;
 export function setMediaProxyConfig(setting) {
     const proxy = process.env.HTTP_PROXY ?? process.env.http_proxy;
@@ -45,13 +46,7 @@ export default function (fastify, options, done) {
     const corsHeader = options['Access-Control-Allow-Headers'] ?? '*';
     const csp = options['Content-Security-Policy'] ?? `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`;
     fastify.addHook('onRequest', (request, reply, done) => {
-        if (corsOrigin === '*') {
-            reply.header('Access-Control-Allow-Origin', request.headers.origin ?? '*');
-            reply.header('Vary', 'Origin');
-        }
-        else {
-            reply.header('Access-Control-Allow-Origin', corsOrigin);
-        }
+        reply.header('Access-Control-Allow-Origin', corsOrigin);
         reply.header('Access-Control-Allow-Headers', corsHeader);
         reply.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
         reply.header('Content-Security-Policy', csp);
@@ -159,6 +154,9 @@ async function proxyHandler(request, reply) {
         }
         else if (file.mime === 'image/svg+xml') {
             image = convertToWebpStream(file.path, 2048, 2048);
+        }
+        else if (!file.mime.startsWith('image/') || !FILE_TYPE_BROWSERSAFE.includes(file.mime)) {
+            throw new StatusError('Rejected type', 403, 'Rejected type');
         }
         if (!image) {
             image = {

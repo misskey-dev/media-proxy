@@ -17,7 +17,7 @@ import { getAgents } from './http.js';
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
 
-const assets = `${_dirname}/../../server/file/assets/`;
+const assets = `${_dirname}/../assets/`;
 
 export type MediaProxyOptions = {
     ['Access-Control-Allow-Origin']?: string;
@@ -73,12 +73,7 @@ export default function (fastify: FastifyInstance, options: MediaProxyOptions | 
     const csp = options!['Content-Security-Policy'] ?? `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`;
 
     fastify.addHook('onRequest', (request, reply, done) => {
-        if (corsOrigin === '*') {
-            reply.header('Access-Control-Allow-Origin', request.headers.origin ?? '*');
-            reply.header('Vary', 'Origin');
-        } else {
-            reply.header('Access-Control-Allow-Origin', corsOrigin);
-        }
+        reply.header('Access-Control-Allow-Origin', corsOrigin);
         reply.header('Access-Control-Allow-Headers', corsHeader);
         reply.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
         reply.header('Content-Security-Policy', csp);
@@ -206,6 +201,8 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
             };
         } else if (file.mime === 'image/svg+xml') {
             image = convertToWebpStream(file.path, 2048, 2048);
+        } else if (!file.mime.startsWith('image/') || !FILE_TYPE_BROWSERSAFE.includes(file.mime)) {
+            throw new StatusError('Rejected type', 403, 'Rejected type');
         }
 
         if (!image) {
