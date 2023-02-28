@@ -85,7 +85,6 @@ export async function downloadUrl(url, path, settings = defaultDownloadConfig) {
     }
     if (process.env.NODE_ENV !== 'production')
         console.log(`Download finished: ${url}`);
-
     return {
         filename,
     };
