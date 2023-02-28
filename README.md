@@ -65,11 +65,11 @@ export default {
     //    'Access-Control-Allow-Origin'を'*'に設定した場合、要求のOriginヘッダーを応答します。
     //    （Misskeyのアバタークロップに必要なため）
     //    Varyヘッダーが付加されるため、同じURLでもOriginごとに画像が生成されてしまうはずです。
-    ['Access-Control-Allow-Origin']: '*',
-    ['Access-Control-Allow-Headers']: '*',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': '*',
 
     // CSP
-    ['Content-Security-Policy']: `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
+    'Content-Security-Policy': `default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`,
 
     // フォワードプロキシ
     // proxy: 'http://127.0.0.1:3128'
