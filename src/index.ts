@@ -231,7 +231,12 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
 
         reply.header('Content-Type', image.type);
         reply.header('Cache-Control', 'max-age=31536000, immutable');
-        reply.header('Content-Disposition', contentDisposition('inline', file.filename));
+        reply.header('Content-Disposition',
+            contentDisposition(
+                'inline',
+                correctFilename(file.filename, image.ext)
+            )
+        );
         return reply.send(image.data);
     } catch (e) {
         if ('cleanup' in file) file.cleanup();
@@ -261,9 +266,7 @@ async function downloadAndDetectTypeFromUrl(url: string): Promise<
 }
 
 function correctFilename(filename: string, ext: string | null) {
-    if (!ext) return filename;
-
-    const dotExt = `.${ext}`;
+    const dotExt = ext ? `.${ext}` : '.unknown';
     if (filename.endsWith(dotExt)) {
         return filename;
     }

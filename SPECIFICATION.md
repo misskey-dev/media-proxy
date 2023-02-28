@@ -26,7 +26,7 @@ Acceptヘッダーは無視される。
 Cache-Controlは、正常なレスポンスの場合`max-age=31536000, immutable`、エラーレスポンスの場合`max-age=300`である。  
 Content-Typeは、ファイルの内容について適切なものが挿入される。
 Content-Security-Policyは、`default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`となっている。
-Content-Dispositionは、filenameは元画像のContent-Disposition.filenameもしくはファイル名に基づいて挿入される。inlineが指定される。
+Content-Dispositionは、filenameは元画像のContent-Disposition.filenameもしくはファイル名に基づいて挿入される。拡張子は適宜変更され、octet-streamの場合は拡張子として.unknownが付加される。inlineが指定される。
 
 ### クエリの一覧
 #### url (必須)
@@ -51,6 +51,9 @@ https://www.google.com/images/errors/robot.png をプロキシする場合:
 
 変換形式が指定されていなかった場合は、画像ファイルもしくは許可されたファイル（FILE_TYPE_BROWSERSAFE）である場合のみプロキシ（ファイルの再配信）が行われる。  
 ただし、svgは、webpに変換される（最大サイズ2048x2048）。
+
+#### 変換クエリ付加時の挙動
+一方、以下の変換クエリが指定されているが、元ファイルがsharp.jsで変換できない形式の場合、404が返される。
 
 #### emoji
 存在すると、高さ128px以下のwebpが応答される。  

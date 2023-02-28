@@ -183,7 +183,7 @@ async function proxyHandler(request, reply) {
         }
         reply.header('Content-Type', image.type);
         reply.header('Cache-Control', 'max-age=31536000, immutable');
-        reply.header('Content-Disposition', contentDisposition('inline', file.filename));
+        reply.header('Content-Disposition', contentDisposition('inline', correctFilename(file.filename, image.ext)));
         return reply.send(image.data);
     }
     catch (e) {
@@ -210,9 +210,7 @@ async function downloadAndDetectTypeFromUrl(url) {
     }
 }
 function correctFilename(filename, ext) {
-    if (!ext)
-        return filename;
-    const dotExt = `.${ext}`;
+    const dotExt = ext ? `.${ext}` : '.unknown';
     if (filename.endsWith(dotExt)) {
         return filename;
     }
