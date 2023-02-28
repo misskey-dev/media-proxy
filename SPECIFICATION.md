@@ -26,6 +26,7 @@ Acceptヘッダーは無視される。
 Cache-Controlは、正常なレスポンスの場合`max-age=31536000, immutable`、エラーレスポンスの場合`max-age=300`である。  
 Content-Typeは、ファイルの内容について適切なものが挿入される。
 Content-Security-Policyは、`default-src 'none'; img-src 'self'; media-src 'self'; style-src 'unsafe-inline'`となっている。
+Content-Dispositionは、filenameは元画像のContent-Disposition.filenameもしくはファイル名に基づいて挿入される。inlineが指定される。
 
 ### クエリの一覧
 #### url (必須)
