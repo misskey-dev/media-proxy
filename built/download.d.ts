@@ -19,4 +19,6 @@ export declare const defaultDownloadConfig: {
     maxSize: number;
     proxy: boolean;
 };
-export declare function downloadUrl(url: string, path: string, settings?: DownloadConfig): Promise<void>;
+export declare function downloadUrl(url: string, path: string, settings?: DownloadConfig): Promise<{
+    filename: string;
+}>;

@@ -6,6 +6,7 @@ import IPCIDR from 'ip-cidr';
 import PrivateIp from 'private-ip';
 import { StatusError } from './status-error.js';
 import { getAgents } from './http.js';
+import { parse } from 'content-disposition';
 const pipeline = util.promisify(stream.pipeline);
 export const defaultDownloadConfig = {
     userAgent: `MisskeyMediaProxy/0.0.0`,
@@ -19,6 +20,8 @@ export async function downloadUrl(url, path, settings = defaultDownloadConfig) {
         console.log(`Downloading ${url} to ${path} ...`);
     const timeout = 30 * 1000;
     const operationTimeout = 60 * 1000;
+    const urlObj = new URL(url);
+    let filename = urlObj.pathname.split('/').pop() ?? 'unknown';
     const req = got.stream(url, {
         headers: {
             'User-Agent': settings.userAgent,
@@ -56,6 +59,13 @@ export async function downloadUrl(url, path, settings = defaultDownloadConfig) {
                 req.destroy();
             }
         }
+        const contentDisposition = res.headers['content-disposition'];
+        if (contentDisposition != null) {
+            const parsed = parse(contentDisposition);
+            if (parsed.parameters.filename) {
+                filename = parsed.parameters.filename;
+            }
+        }
     }).on('downloadProgress', (progress) => {
         if (progress.transferred > settings.maxSize) {
             console.log(`maxSize exceeded (${progress.transferred} > ${settings.maxSize}) on downloadProgress`);
@@ -75,6 +85,10 @@ export async function downloadUrl(url, path, settings = defaultDownloadConfig) {
     }
     if (process.env.NODE_ENV !== 'production')
         console.log(`Download finished: ${url}`);
+
+    return {
+        filename,
+    };
 }
 function isPrivateIp(ip, allowedPrivateNetworks) {
     for (const net of allowedPrivateNetworks ?? []) {

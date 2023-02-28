@@ -13,6 +13,7 @@ import sharp from 'sharp';
 import { StatusError } from './status-error.js';
 import { DownloadConfig, defaultDownloadConfig, downloadUrl } from './download.js';
 import { getAgents } from './http.js';
+import _contentDisposition from 'content-disposition';
 
 const _filename = fileURLToPath(import.meta.url);
 const _dirname = dirname(_filename);
@@ -230,6 +231,7 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
 
         reply.header('Content-Type', image.type);
         reply.header('Cache-Control', 'max-age=31536000, immutable');
+        reply.header('Content-Disposition', contentDisposition('inline', file.filename));
         return reply.send(image.data);
     } catch (e) {
         if ('cleanup' in file) file.cleanup();
@@ -238,11 +240,11 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
 }
 
 async function downloadAndDetectTypeFromUrl(url: string): Promise<
-    { state: 'remote'; mime: string; ext: string | null; path: string; cleanup: () => void; }
+    { state: 'remote'; mime: string; ext: string | null; path: string; cleanup: () => void; filename: string; }
 > {
     const [path, cleanup] = await createTemp();
     try {
-        await downloadUrl(url, path, config);
+        const { filename } = await downloadUrl(url, path, config);
 
         const { mime, ext } = await detectType(path);
 
@@ -250,9 +252,28 @@ async function downloadAndDetectTypeFromUrl(url: string): Promise<
             state: 'remote',
             mime, ext,
             path, cleanup,
+            filename: correctFilename(filename, ext),
         }
     } catch (e) {
         cleanup();
         throw e;
     }
+}
+
+function correctFilename(filename: string, ext: string | null) {
+    if (!ext) return filename;
+
+    const dotExt = `.${ext}`;
+    if (filename.endsWith(dotExt)) {
+        return filename;
+    }
+    if (ext === 'jpg' && filename.endsWith('.jpeg')) {
+        return filename;
+    }
+    return `${filename}${dotExt}`;
+}
+
+function contentDisposition(type: 'inline' | 'attachment', filename: string): string {
+	const fallback = filename.replace(/[^\w.-]/g, '_');
+	return _contentDisposition(filename, { type, fallback });
 }

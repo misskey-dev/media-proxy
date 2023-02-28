@@ -8,6 +8,7 @@ import IPCIDR from 'ip-cidr';
 import PrivateIp from 'private-ip';
 import { StatusError } from './status-error.js';
 import { getAgents } from './http.js';
+import { parse } from 'content-disposition';
 
 const pipeline = util.promisify(stream.pipeline);
 
@@ -29,11 +30,16 @@ export const defaultDownloadConfig = {
     ...getAgents()
 }
 
-export async function downloadUrl(url: string, path: string, settings:DownloadConfig = defaultDownloadConfig): Promise<void> {
+export async function downloadUrl(url: string, path: string, settings:DownloadConfig = defaultDownloadConfig): Promise<{
+    filename: string;
+}> {
     if (process.env.NODE_ENV !== 'production') console.log(`Downloading ${url} to ${path} ...`);
 
     const timeout = 30 * 1000;
     const operationTimeout = 60 * 1000;
+
+    const urlObj = new URL(url);
+    let filename = urlObj.pathname.split('/').pop() ?? 'unknown';
 
     const req = got.stream(url, {
         headers: {
@@ -73,6 +79,14 @@ export async function downloadUrl(url: string, path: string, settings:DownloadCo
                 req.destroy();
             }
         }
+
+        const contentDisposition = res.headers['content-disposition'];
+        if (contentDisposition != null) {
+            const parsed = parse(contentDisposition);
+            if (parsed.parameters.filename) {
+                filename = parsed.parameters.filename;
+            }
+        }
     }).on('downloadProgress', (progress: Got.Progress) => {
         if (progress.transferred > settings.maxSize) {
             console.log(`maxSize exceeded (${progress.transferred} > ${settings.maxSize}) on downloadProgress`);
@@ -91,6 +105,10 @@ export async function downloadUrl(url: string, path: string, settings:DownloadCo
     }
 
     if (process.env.NODE_ENV !== 'production') console.log(`Download finished: ${url}`);
+
+    return {
+        filename,
+    }
 }
 
 function isPrivateIp(ip: string, allowedPrivateNetworks: string[]): boolean {
