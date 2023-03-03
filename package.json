@@ -1,9 +1,9 @@
 {
   "name": "misskey-media-proxy",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "The Media Proxy for Misskey",
   "main": "built/index.js",
-  "packageManager": "pnpm@7.26.0",
+  "packageManager": "pnpm@7.28.0",
   "type": "module",
   "files": [
     "built",
@@ -47,6 +47,7 @@
     "is-svg": "^4.3.2",
     "private-ip": "^3.0.0",
     "sharp": "^0.31.3",
+    "sharp-read-bmp": "github:misskey-dev/sharp-read-bmp",
     "tmp": "^0.2.1"
   }
 }

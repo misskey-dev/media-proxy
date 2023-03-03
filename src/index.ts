@@ -6,10 +6,11 @@ import { dirname } from 'node:path';
 import fastifyStatic from '@fastify/static';
 import { createTemp } from './create-temp.js';
 import { FILE_TYPE_BROWSERSAFE } from './const.js';
-import { IImageStreamable, convertToWebpStream, webpDefault } from './image-processor.js';
+import { IImageStreamable, convertToWebpStream, webpDefault, convertSharpToWebpStream } from './image-processor.js';
 import type { FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginOptions } from 'fastify';
 import { detectType, isMimeImage } from './file-info.js';
 import sharp from 'sharp';
+import { sharpBmp } from 'sharp-read-bmp';
 import { StatusError } from './status-error.js';
 import { DownloadConfig, defaultDownloadConfig, downloadUrl } from './download.js';
 import { getAgents } from './http.js';
@@ -153,12 +154,12 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
                     type: file.mime,
                 };
             } else {
-                const data = sharp(file.path, { animated: !('static' in request.query) })
-                        .resize({
-                            height: 'emoji' in request.query ? 128 : 320,
-                            withoutEnlargement: true,
-                        })
-                        .webp(webpDefault);
+                const data = (await sharpBmp(file.path, file.mime, { animated: !('static' in request.query) }))
+                    .resize({
+                        height: 'emoji' in request.query ? 128 : 320,
+                        withoutEnlargement: true,
+                    })
+                    .webp(webpDefault);
 
                 image = {
                     data,
@@ -167,11 +168,11 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
                 };
             }
         } else if ('static' in request.query) {
-            image = convertToWebpStream(file.path, 498, 280);
+            image = convertSharpToWebpStream(await sharpBmp(file.path, file.mime), 498, 280);
         } else if ('preview' in request.query) {
-            image = convertToWebpStream(file.path, 200, 200);
+            image = convertSharpToWebpStream(await sharpBmp(file.path, file.mime), 200, 200);
         } else if ('badge' in request.query) {
-            const mask = sharp(file.path)
+            const mask = (await sharpBmp(file.path, file.mime))
                 .resize(96, 96, {
                     fit: 'inside',
                     withoutEnlargement: false,

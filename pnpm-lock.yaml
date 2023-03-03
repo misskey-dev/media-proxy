@@ -19,6 +19,7 @@ specifiers:
   is-svg: ^4.3.2
   private-ip: ^3.0.0
   sharp: ^0.31.3
+  sharp-read-bmp: github:misskey-dev/sharp-read-bmp
   tmp: ^0.2.1
   typescript: ^4.9.5
 
@@ -35,6 +36,7 @@ dependencies:
   is-svg: 4.3.2
   private-ip: 3.0.0
   sharp: 0.31.3
+  sharp-read-bmp: github.com/misskey-dev/sharp-read-bmp/c5fb82e26fa50fca8b3b2d7e22467626d7f61baa
   tmp: 0.2.1
 
 devDependencies:
@@ -47,6 +49,10 @@ devDependencies:
   typescript: 4.9.5
 
 packages:
+
+  /@canvas/image-data/1.0.0:
+    resolution: {integrity: sha512-BxOqI5LgsIQP1odU5KMwV9yoijleOPzHL18/YvNqF9KFSGF2K/DLlYAbDQsWqd/1nbaFuSkYD/191dpMtNh4vw==}
+    dev: false
 
   /@chainsafe/is-ip/2.0.1:
     resolution: {integrity: sha512-nqSJ8u2a1Rv9FYbyI8qpDhTYujaKEyLknNrTejLYoSWmdeg+2WB7R6BZqPZYfrJzDxVi3rl6ZQuoaEvpKRZWgQ==}
@@ -641,6 +647,23 @@ packages:
         optional: true
     dependencies:
       ms: 2.1.2
+    dev: false
+
+  /decode-bmp/0.2.1:
+    resolution: {integrity: sha512-NiOaGe+GN0KJqi2STf24hfMkFitDUaIoUU3eKvP/wAbLe8o6FuW5n/x7MHPR0HKvBokp6MQY/j7w8lewEeVCIA==}
+    engines: {node: '>=8.6.0'}
+    dependencies:
+      '@canvas/image-data': 1.0.0
+      to-data-view: 1.1.0
+    dev: false
+
+  /decode-ico/0.4.1:
+    resolution: {integrity: sha512-69NZfbKIzux1vBOd31al3XnMnH+2mqDhEgLdpygErm4d60N+UwA5Sq5WFjmEDQzumgB9fElojGwWG0vybVfFmA==}
+    engines: {node: '>=8.6'}
+    dependencies:
+      '@canvas/image-data': 1.0.0
+      decode-bmp: 0.2.1
+      to-data-view: 1.1.0
     dev: false
 
   /decompress-response/6.0.0:
@@ -1978,6 +2001,10 @@ packages:
     resolution: {integrity: sha512-3f0uOEAQwIqGuWW2MVzYg8fV/QNnc/IpuJNG837rLuczAaLVHslWHZQj4IGiEl5Hs3kkbhwL9Ab7Hrsmuj+Smw==}
     dev: false
 
+  /to-data-view/1.1.0:
+    resolution: {integrity: sha512-1eAdufMg6mwgmlojAx3QeMnzB/BTVp7Tbndi3U7ftcT2zCZadjxkkmLmd97zmaxWi+sgGcgWrokmpEoy0Dn0vQ==}
+    dev: false
+
   /to-regex-range/5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
@@ -2063,4 +2090,14 @@ packages:
   /yocto-queue/0.1.0:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
+    dev: false
+
+  github.com/misskey-dev/sharp-read-bmp/c5fb82e26fa50fca8b3b2d7e22467626d7f61baa:
+    resolution: {tarball: https://codeload.github.com/misskey-dev/sharp-read-bmp/tar.gz/c5fb82e26fa50fca8b3b2d7e22467626d7f61baa}
+    name: sharp-read-bmp
+    version: 1.0.0
+    dependencies:
+      decode-bmp: 0.2.1
+      decode-ico: 0.4.1
+      sharp: 0.31.3
     dev: false
