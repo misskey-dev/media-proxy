@@ -16,12 +16,13 @@ export type IImageStream = {
 export type IImageStreamable = IImage | IImageStream;
 
 export const webpDefault: sharp.WebpOptions = {
-    quality: 85,
+    quality: 77,
     alphaQuality: 95,
     lossless: false,
     nearLossless: false,
     smartSubsample: true,
     mixed: true,
+    effort: 2,
 };
 
 export function convertToWebpStream(path: string, width: number, height: number, options: sharp.WebpOptions = webpDefault): IImageStream {
