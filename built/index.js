@@ -122,7 +122,7 @@ async function proxyHandler(request, reply) {
             }
         }
         else if ('static' in request.query) {
-            image = convertSharpToWebpStream(await sharpBmp(file.path, file.mime), 498, 280);
+            image = convertSharpToWebpStream(await sharpBmp(file.path, file.mime), 498, 422);
         }
         else if ('preview' in request.query) {
             image = convertSharpToWebpStream(await sharpBmp(file.path, file.mime), 200, 200);
