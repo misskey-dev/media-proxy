@@ -1,11 +1,12 @@
 import sharp from 'sharp';
 export const webpDefault = {
-    quality: 85,
+    quality: 77,
     alphaQuality: 95,
     lossless: false,
     nearLossless: false,
     smartSubsample: true,
     mixed: true,
+    effort: 2,
 };
 export function convertToWebpStream(path, width, height, options = webpDefault) {
     return convertSharpToWebpStream(sharp(path), width, height, options);
