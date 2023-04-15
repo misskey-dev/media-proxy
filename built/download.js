@@ -61,9 +61,14 @@ export async function downloadUrl(url, path, settings = defaultDownloadConfig) {
         }
         const contentDisposition = res.headers['content-disposition'];
         if (contentDisposition != null) {
-            const parsed = parse(contentDisposition);
-            if (parsed.parameters.filename) {
-                filename = parsed.parameters.filename;
+            try {
+                const parsed = parse(contentDisposition);
+                if (parsed.parameters.filename) {
+                    filename = parsed.parameters.filename;
+                }
+            }
+            catch (e) {
+                console.log(`Failed to parse content-disposition: ${contentDisposition}\n${e}`);
             }
         }
     }).on('downloadProgress', (progress) => {
