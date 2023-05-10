@@ -30,7 +30,7 @@ export async function detectType(path) {
             return TYPE_OCTET_STREAM;
         }
         return {
-            mime: type.mime,
+            mime: fixMime(type.mime),
             ext: type.ext,
         };
     }
@@ -59,3 +59,13 @@ const dictionary = {
     'sharp-animation-convertible-image': ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif', 'image/svg+xml', 'image/x-icon', 'image/bmp'],
 };
 export const isMimeImage = (mime, type) => dictionary[type].includes(mime);
+function fixMime(mime) {
+    // see https://github.com/misskey-dev/misskey/pull/10686
+    if (mime === "audio/x-flac") {
+        return "audio/flac";
+    }
+    if (mime === "audio/vnd.wave") {
+        return "audio/wav";
+    }
+    return mime;
+}
