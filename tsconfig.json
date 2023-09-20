@@ -10,8 +10,8 @@
 		"declaration": true,
 		"sourceMap": false,
 		"target": "es2021",
-		"module": "esnext",
-		"moduleResolution": "node",
+		"module": "nodenext",
+		"moduleResolution": "nodenext",
 		"allowSyntheticDefaultImports": true,
 		"removeComments": false,
 		"noLib": false,
@@ -36,6 +36,7 @@
 		],
 		"typeRoots": [
 			"./node_modules/@types",
+			"./node_modules",
 			"./src/@types"
 		],
 		"lib": [

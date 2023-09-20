@@ -1,9 +1,9 @@
 {
   "name": "misskey-media-proxy",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "description": "The Media Proxy for Misskey",
   "main": "built/index.js",
-  "packageManager": "pnpm@7.28.0",
+  "packageManager": "pnpm@8.7.5",
   "type": "module",
   "files": [
     "built",
@@ -27,26 +27,26 @@
   "homepage": "https://github.com/misskey-dev/media-proxy#readme",
   "devDependencies": {
     "@swc/cli": "^0.1.62",
-    "@swc/core": "^1.3.57",
-    "@types/content-disposition": "^0.5.5",
-    "@types/node": "^18.16.7",
-    "@types/sharp": "^0.31.1",
-    "@types/tmp": "^0.2.3",
-    "typescript": "^4.9.5"
+    "@swc/core": "^1.3.86",
+    "@types/content-disposition": "^0.5.6",
+    "@types/node": "^20.6.3",
+    "@types/tmp": "^0.2.4",
+    "typescript": "^5.2.2"
   },
   "dependencies": {
-    "@fastify/static": "^6.10.1",
+    "@fastify/static": "^6.11.2",
     "cacheable-lookup": "^7.0.0",
     "content-disposition": "^0.5.4",
-    "fastify": "^4.17.0",
-    "fastify-cli": "^5.7.1",
-    "file-type": "^18.4.0",
-    "got": "^12.6.0",
+    "fastify": "^4.23.2",
+    "fastify-cli": "^5.8.0",
+    "file-type": "^18.5.0",
+    "got": "^13.0.0",
     "hpagent": "^1.2.0",
     "ip-cidr": "^3.1.0",
-    "is-svg": "^4.4.0",
-    "private-ip": "^3.0.0",
-    "sharp": "^0.31.3",
+    "ipaddr.js": "^2.1.0",
+    "is-svg": "^5.0.0",
+    "private-ip": "^3.0.1",
+    "sharp": "^0.32.6",
     "sharp-read-bmp": "github:misskey-dev/sharp-read-bmp",
     "tmp": "^0.2.1"
   }

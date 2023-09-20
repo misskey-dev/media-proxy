@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { fileTypeFromFile } from 'file-type';
-import type fileType from 'file-type';
+import type { MimeType } from 'file-type';
 import isSvg from 'is-svg';
 import { promisify } from 'node:util';
 
@@ -57,7 +57,7 @@ async function checkSvg(path: string) {
     try {
         const size = await getFileSize(path);
         if (size > 1 * 1024 * 1024) return false;
-        return isSvg(fs.readFileSync(path));
+        return isSvg(fs.readFileSync(path, { encoding: 'utf-8' }));
     } catch {
         return false;
     }
@@ -73,7 +73,7 @@ const dictionary = {
 
 export const isMimeImage = (mime: string, type: keyof typeof dictionary): boolean => dictionary[type].includes(mime);
 
-function fixMime(mime: string | fileType.MimeType): string {
+function fixMime(mime: string | MimeType): string {
     // see https://github.com/misskey-dev/misskey/pull/10686
     if (mime === "audio/x-flac") {
         return "audio/flac";

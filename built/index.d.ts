@@ -1,5 +1,5 @@
-/// <reference types="node" />
-/// <reference types="node" />
+/// <reference types="node" resolution-mode="require"/>
+/// <reference types="node" resolution-mode="require"/>
 import * as http from 'node:http';
 import * as https from 'node:https';
 import type { FastifyInstance } from 'fastify';

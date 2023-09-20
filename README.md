@@ -10,6 +10,8 @@ Misskeyの/proxyが単体で動作します（Misskeyのコードがほぼその
 一応AWS Lambdaで動かす実装を用意しましたが、全くおすすめしません。
 https://github.com/tamaina/media-proxy-lambda
 
+Sharp.jsを使っているため、メモリアロケータにjemallocを指定することをお勧めします。
+
 ## Fastifyプラグインとして動作させる
 ### npm install
 
@@ -34,6 +36,13 @@ fastify.register(MediaProxy);
 ```
 git clone https://github.com/misskey-dev/media-proxy.git
 cd media-proxy
+```
+
+### jemallocをインストール
+Debian/Ubuntuのaptの場合
+
+```
+sudo apt install libjemalloc2
 ```
 
 ### pnpm install
@@ -76,14 +85,17 @@ export default {
 適当にサーバーを公開してください。  
 （ここではmediaproxy.example.comで公開するものとします。）
 
-メモ書き程度にsystemdでの開始方法を残しますが、もしかしたらAWS Lambdaとかで動かしたほうが楽かもしれません。  
+メモ書き程度にsystemdでの開始方法を残します。  
 （サーバーレスだとsharp.jsが動かない可能性が高いため、そこはなんとかしてください）
 
 systemdサービスのファイルを作成…
 
 /etc/systemd/system/misskey-proxy.service
 
-エディタで開き、以下のコードを貼り付けて保存（ユーザーやポートは適宜変更すること）:
+エディタで開き、以下のコードを貼り付けて保存
+
+ユーザーやポートは適宜変更すること。  
+また、arm64の場合`Environment="LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2"`のx86_64をaarch64に変更する必要がある。jemallocのパスはディストリビューションによって変わる可能性がある。
 
 ```systemd
 [Unit]
@@ -94,6 +106,7 @@ Type=simple
 User=misskey
 ExecStart=/usr/bin/npm start
 WorkingDirectory=/home/misskey/media-proxy
+Environment="LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2"
 Environment="NODE_ENV=production"
 Environment="PORT=3000"
 TimeoutSec=60
