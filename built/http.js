@@ -3,8 +3,8 @@ import * as https from 'node:https';
 import CacheableLookup from 'cacheable-lookup';
 import { HttpProxyAgent, HttpsProxyAgent } from 'hpagent';
 const cache = new CacheableLookup({
-    maxTtl: 3600,
-    errorTtl: 30,
+    maxTtl: 3600, // 1hours
+    errorTtl: 30, // 30secs
     lookup: false, // nativeのdns.lookupにfallbackしない
 });
 const _http = new http.Agent({

@@ -29,7 +29,7 @@ export async function downloadUrl(url, path, settings = defaultDownloadConfig) {
             lookup: timeout,
             connect: timeout,
             secureConnect: timeout,
-            socket: timeout,
+            socket: timeout, // read timeout
             response: timeout,
             send: timeout,
             request: operationTimeout, // whole operation timeout

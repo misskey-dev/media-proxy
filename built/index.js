@@ -158,7 +158,7 @@ async function proxyHandler(request, reply) {
         else if (file.mime === 'image/svg+xml') {
             image = convertToWebpStream(file.path, 2048, 2048);
         }
-        else if (!file.mime.startsWith('image/') || !FILE_TYPE_BROWSERSAFE.includes(file.mime)) {
+        else if (!(file.mime.startsWith('image/') || FILE_TYPE_BROWSERSAFE.includes(file.mime))) {
             throw new StatusError('Rejected type', 403, 'Rejected type');
         }
         if (!image) {

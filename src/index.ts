@@ -10,7 +10,7 @@ import { IImageStreamable, convertToWebpStream, webpDefault, convertSharpToWebpS
 import type { FastifyInstance, FastifyRequest, FastifyReply, FastifyPluginOptions } from 'fastify';
 import { detectType, isMimeImage } from './file-info.js';
 import sharp from 'sharp';
-import { sharpBmp } from 'sharp-read-bmp';
+import { sharpBmp } from '@misskey-dev/sharp-read-bmp';
 import { StatusError } from './status-error.js';
 import { DownloadConfig, defaultDownloadConfig, downloadUrl } from './download.js';
 import { getAgents } from './http.js';
@@ -204,7 +204,7 @@ async function proxyHandler(request: FastifyRequest<{ Params: { url: string; }; 
             };
         } else if (file.mime === 'image/svg+xml') {
             image = convertToWebpStream(file.path, 2048, 2048);
-        } else if (!file.mime.startsWith('image/') || !FILE_TYPE_BROWSERSAFE.includes(file.mime)) {
+        } else if (!(file.mime.startsWith('image/') || FILE_TYPE_BROWSERSAFE.includes(file.mime))) {
             throw new StatusError('Rejected type', 403, 'Rejected type');
         }
 
