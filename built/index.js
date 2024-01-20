@@ -7,7 +7,7 @@ import { FILE_TYPE_BROWSERSAFE } from './const.js';
 import { convertToWebpStream, webpDefault, convertSharpToWebpStream } from './image-processor.js';
 import { detectType, isMimeImage } from './file-info.js';
 import sharp from 'sharp';
-import { sharpBmp } from 'sharp-read-bmp';
+import { sharpBmp } from '@misskey-dev/sharp-read-bmp';
 import { StatusError } from './status-error.js';
 import { defaultDownloadConfig, downloadUrl } from './download.js';
 import { getAgents } from './http.js';
