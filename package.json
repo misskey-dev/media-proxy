@@ -1,6 +1,6 @@
 {
   "name": "misskey-media-proxy",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "description": "The Media Proxy for Misskey",
   "main": "built/index.js",
   "packageManager": "pnpm@8.7.5",
