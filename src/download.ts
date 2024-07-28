@@ -57,7 +57,7 @@ export async function downloadUrl(url: string, path: string, settings:DownloadCo
             http: settings.httpAgent,
             https: settings.httpsAgent,
         },
-        http2: true,
+        http2: false,	// default
         retry: {
             limit: 0,
         },
